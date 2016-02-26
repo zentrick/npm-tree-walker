@@ -1,6 +1,6 @@
 {
   "name": "npm-tree-walker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Walks an npm package's dependency tree.",
   "main": "index.js",
   "author": "Zentrick nv (https://www.zentrick.com/)",
