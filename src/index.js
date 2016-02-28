@@ -54,22 +54,23 @@ export default class TreeWalker extends EventEmitter {
       ? Object.assign({}, pkg.dependencies, pkg.devDependencies)
       : pkg.dependencies
     for (const dep of Object.keys(deps)) {
-      this._schedule(this._boundFindDependency, dep, trail, pkgMeta)
+      const isOpt = (pkg.optionalDependencies != null && !!pkg.optionalDependencies[dep])
+      this._schedule(this._boundFindDependency, dep, isOpt, trail, pkgMeta)
     }
   }
 
-  async _findDependency (dep, trail, pkgMeta) {
+  async _findDependency (dep, isOpt, trail, pkgMeta) {
     const currentTrail = trail.slice()
 
     while (currentTrail.length > 0 && !(await this._trailHasPkg([...currentTrail, dep]))) {
       currentTrail.pop()
     }
 
-    if (currentTrail.length === 0) {
+    if (currentTrail.length > 0) {
+      this._schedule(this._boundWalk, [...currentTrail, dep], pkgMeta)
+    } else if (!isOpt) {
       throw new Error(`Dependency not found in node_modules: ${dep}`)
     }
-
-    this._schedule(this._boundWalk, [...currentTrail, dep], pkgMeta)
   }
 
   async _trailHasPkg (trail) {
