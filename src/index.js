@@ -7,7 +7,8 @@ import fsp from 'fs-promise'
 export default class TreeWalker extends EventEmitter {
   static get DEFAULT_OPTIONS () {
     return {
-      concurrency: 10
+      concurrency: 10,
+      dev: false
     }
   }
 
@@ -41,7 +42,9 @@ export default class TreeWalker extends EventEmitter {
 
     this.emit('data', pkgMeta)
 
-    const deps = pkg.dependencies || {}
+    const deps = (this._options.dev && parentMeta == null)
+      ? Object.assign({}, pkg.dependencies, pkg.devDependencies)
+      : pkg.dependencies
     for (const dep of Object.keys(deps)) {
       this._schedule(this._boundFindDependency, dep, trail, pkgMeta)
     }
