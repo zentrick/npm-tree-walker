@@ -18,6 +18,7 @@ export default class TreeWalker extends EventEmitter {
     this._options = Object.assign({}, TreeWalker.DEFAULT_OPTIONS, options)
     this._limiter = new Bottleneck(this._options.concurrency)
     this._taskCount = 0
+    this._seen = null
     this._boundWalk = this._walk.bind(this)
     this._boundFindDependency = this._findDependency.bind(this)
     this._boundAfterTask = this._afterTask.bind(this)
@@ -25,11 +26,13 @@ export default class TreeWalker extends EventEmitter {
 
   run () {
     this._taskCount = 0
+    this._seen = Object.create(null)
     this._schedule(this._boundWalk, ['.'])
   }
 
   async _walk (trail, parentMeta = null) {
     const relPath = this._trailToRelPkgPath(trail)
+
     const pkg = await readPkg(this._relToAbsPkgPath(relPath))
     const pkgMeta = {
       name: pkg.name,
@@ -41,6 +44,11 @@ export default class TreeWalker extends EventEmitter {
     }
 
     this.emit('data', pkgMeta)
+
+    if (this._seen[relPath]) {
+      return
+    }
+    this._seen[relPath] = true
 
     const deps = (this._options.dev && parentMeta == null)
       ? Object.assign({}, pkg.dependencies, pkg.devDependencies)
