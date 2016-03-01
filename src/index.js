@@ -42,7 +42,7 @@ export default class TreeWalker extends EventEmitter {
       path: relPath,
       parent: parentMeta
     }
-    const existingKeys = MAIN_KEYS.filter((key) => pkgMeta[key])
+    const existingKeys = MAIN_KEYS.filter((key) => !!pkg[key])
     for (const key of existingKeys) {
       pkgMeta[key] = pkg[key]
     }
