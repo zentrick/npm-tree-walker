@@ -4,6 +4,8 @@ import readPkg from 'read-pkg'
 import Bottleneck from 'bottleneck'
 import fsp from 'fs-promise'
 
+const MAIN_KEYS = ['main', 'jsnext:main', 'browser']
+
 export default class TreeWalker extends EventEmitter {
   static get DEFAULT_OPTIONS () {
     return {
@@ -37,10 +39,12 @@ export default class TreeWalker extends EventEmitter {
     const pkgMeta = {
       name: pkg.name,
       version: pkg.version,
-      format: 'cjs',
-      main: pkg.main || 'index.js',
       path: relPath,
       parent: parentMeta
+    }
+    const existingKeys = MAIN_KEYS.filter((key) => pkgMeta[key])
+    for (const key of existingKeys) {
+      pkgMeta[key] = pkg[key]
     }
 
     this.emit('data', pkgMeta)
