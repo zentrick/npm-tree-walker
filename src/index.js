@@ -4,20 +4,22 @@ import readPkg from 'read-pkg'
 import Bottleneck from 'bottleneck'
 import fsp from 'fs-promise'
 
+const DEFAULT_OPTIONS = {
+  concurrency: 10,
+  dev: false
+}
+
 const MAIN_KEYS = ['main', 'jsnext:main', 'browser']
 
 export default class TreeWalker extends EventEmitter {
   static get DEFAULT_OPTIONS () {
-    return {
-      concurrency: 10,
-      dev: false
-    }
+    return DEFAULT_OPTIONS
   }
 
   constructor (pkgRoot, options) {
     super()
     this._pkgRoot = pkgRoot
-    this._options = Object.assign({}, TreeWalker.DEFAULT_OPTIONS, options)
+    this._options = Object.assign({}, DEFAULT_OPTIONS, options)
     this._limiter = new Bottleneck(this._options.concurrency)
     this._taskCount = 0
     this._seen = null
