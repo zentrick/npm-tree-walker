@@ -111,9 +111,16 @@ export default class TreeWalker extends EventEmitter {
 
   _afterTask (error = null) {
     this._taskCount--
+    if (error != null || this._taskCount === 0) {
+      this._onEnd(error)
+    }
+  }
+
+  _onEnd (error) {
+    this._seen = null
     if (error != null) {
       this.emit('error', error)
-    } else if (this._taskCount === 0) {
+    } else {
       this.emit('end')
     }
   }
