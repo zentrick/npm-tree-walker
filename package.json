@@ -23,9 +23,7 @@
     "test": "gulp test"
   },
   "repository": "zentrick/npm-tree-walker",
-  "bugs": {
-    "url": "https://github.com/zentrick/npm-tree-walker/issues"
-  },
+  "bugs": "https://github.com/zentrick/npm-tree-walker/issues",
   "dependencies": {
     "babel-runtime": "^6.5.0",
     "bottleneck": "^1.10.2",
