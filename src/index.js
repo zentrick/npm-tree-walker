@@ -58,7 +58,7 @@ export default class TreeWalker extends EventEmitter {
 
     const deps = (this._options.dev && parentMeta == null)
       ? Object.assign({}, pkg.dependencies, pkg.devDependencies)
-      : pkg.dependencies
+      : (pkg.dependencies || {})
     for (const dep of Object.keys(deps)) {
       const isOpt = (pkg.optionalDependencies != null && !!pkg.optionalDependencies[dep])
       this._schedule(this._boundFindDependency, dep, isOpt, trail, pkgMeta)
